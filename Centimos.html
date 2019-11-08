@@ -27,40 +27,70 @@
 </ol>
 
 <script>
+function RegistoCor(mensagem, cor) {
+
+    cor = cor || "black";
+
+    switch (cor) {
+        case "sucesso":  
+             cor = "Green"; 
+             break;
+        case "info":     
+             cor = "DodgerBlue";  
+             break;
+        case "erro":   
+             cor = "Red";     
+             break;
+        case "aviso":  
+             cor = "Orange";   
+             break;
+        default: 
+             cor = cor;
+    }
+
+    console.log("%c" + mensagem, "color:" + cor);
+}
+
 $(document).ready(function(){
   
   $('form').on('submit', function(e){
     e.preventDefault();
     
-    // rounding prevents code-splosion from non-integer values
-    var sobra = Math.floor($('#quantidade').val());
+		//O arredondamento da sobra impede a explosão do código a partir de valores não inteiros
+		var sobra = Math.floor($('#quantidade').val());
     
-    var OpcoesTroco = [50, 20, 10, 5, 2, 1];
-    var ValorTroco = [];
+		var OpcoesTroco = [50, 20, 10, 5, 2, 1];
+		var ValorTroco = [];
     
-    while (sobra > 0) {
+		while (sobra > 0) {
       
-      $.each(OpcoesTroco, function(index, value){
-        if (sobra % value >= value) {
-          return;
-        }
+			$.each(OpcoesTroco, function(index, value){
+				if (sobra % value >= value) {
+					return;
+				}
 
-        var numMoedas = Math.floor(sobra / value);
+				var numMoedas = Math.floor(sobra / value);
 
-        for (var i = 0; i < numMoedas; i++) {
-          ValorTroco.push(value);
-        }
+				for (var i = 0; i < numMoedas; i++) {
+					ValorTroco.push(value);
+				}
 
-        sobra = sobra - (value * numMoedas);
-      });
-    }
+				sobra = sobra - (value * numMoedas);
+			});
+		}
 
-    var ValorTrocoFormatado = $.map(ValorTroco, function(value){
-      return '<span>' + value + ' centimo(s); </span>';
-    });
-
-    $("#troco").empty().append(ValorTrocoFormatado.join(''));
-	console.log(ValorTroco);
+		if (sobra == 0 || isNaN(sobra)) {
+			RegistoCor("A troca de dinheiro não foi sucessiva!", "erro");
+			RegistoCor("Adicione um valor para poder fazer a troca.", "aviso");
+		} else {
+			var ValorTrocoFormatado = $.map(troca(sobra), function(value){
+				return '<span>' + value + ' centimo(s; </span>';
+			});
+			console.log(ValorTroco);
+			RegistoCor("A troca de dinheiro foi sucessiva!", "sucesso");
+	
+			$("#troco").empty().append(ValorTrocoFormatado.join(''));
+		}
   });
 });
 </script> 
