@@ -27,47 +27,68 @@
 </ol>
 
 <script>
+function RegistoCor(mensagem, cor) {
+
+    cor = cor || "black";
+
+    switch (cor) {
+        case "sucesso":  
+             cor = "Green"; 
+             break;
+        case "info":     
+             cor = "DodgerBlue";  
+             break;
+        case "erro":   
+             cor = "Red";     
+             break;
+        case "aviso":  
+             cor = "Orange";   
+             break;
+        default: 
+             cor = cor;
+    }
+	
+    console.log("%c" + mensagem, "color:" + cor);
+}
+
 $(document).ready(function(){
   
   $('form').on('submit', function(e){
     e.preventDefault();
 	
-		// rounding prevents code-splosion from non-integer values
+		//O arredondamento da sobra impede a explosão do código a partir de valores não inteiros
         var sobra = Math.floor($('#quantidade').val());
 		
-        var OpcoesTroco = [5, 10, 20, 50, 100, 200, 500];
+        var OpcoesTroco = [1, 2, 5, 10, 20, 50, 100, 200, 500];
 		var ValorTroco = [];
-		
-        function mod(num){
-            if (num % 5 === 0){
-                return num;
-            }else{
-                return num + 5 - num % 5
-            }
-        }
 
-    function troca(num){
-        var index = OpcoesTroco.length - 1;
-        var divisao = [];
-        while (sobra >= OpcoesTroco[0]){
-            if (sobra >= OpcoesTroco[index]){
-               sobra -= OpcoesTroco[index];
-               divisao.push(OpcoesTroco[index]);
-			   ValorTroco.push(OpcoesTroco[index]);
-            }else{
-                index--;
-            }
-        }
-        return divisao;
-    }
+		function troca(num){
+			var index = OpcoesTroco.length - 1;
+			var divisao = [];
+			while (sobra >= OpcoesTroco[0]){
+				if (sobra >= OpcoesTroco[index]){
+					sobra -= OpcoesTroco[index];
+					divisao.push(OpcoesTroco[index]);
+					ValorTroco.push(OpcoesTroco[index]);
+				}else{
+					index--;
+				}
+			}
+			return divisao;
+		}
+		
+		if (sobra == 0 || isNaN(sobra)) {
+			RegistoCor("A troca de dinheiro não foi sucessiva!", "erro");
+			RegistoCor("Adicione um valor para poder fazer a troca.", "aviso");
+		} else {
+			var ValorTrocoFormatado = $.map(troca(sobra), function(value){
+				return '<span>' + value + ' euro(s); </span>';
+			});
+			console.log(ValorTroco);
+			RegistoCor("A troca de dinheiro foi sucessiva!", "sucesso");
 	
-    var ValorTrocoFormatado = $.map(troca(sobra), function(value){
-      return '<span>' + value + ' euro(s); </span>';
-    });
-	
-	console.log(ValorTroco);
-	
-	$("#troco").empty().append(ValorTrocoFormatado.join(''));
+			$("#troco").empty().append(ValorTrocoFormatado.join(''));
+		}
   });
 });
 
