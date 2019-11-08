@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-br">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<title>Maquina de Trocos</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</head>
+
+<body>
+
+<form>
+  <div>
+    <label for="name">Insira a quantidade que deseja trocar:</label>
+    <input type="text" name="name" id="quantidade" />
+    
+    <input type="submit" value="Dar troco" />
+  </div>
+</form>
+
+<ol>
+<div id="troco"></div>
+</ol>
+
+<script>
+$(document).ready(function(){
+  
+  $('form').on('submit', function(e){
+    e.preventDefault();
+    
+    // rounding prevents code-splosion from non-integer values
+    var sobra = Math.floor($('#quantidade').val());
+    
+    var OpcoesTroco = [50, 20, 10, 5, 2, 1];
+    var ValorTroco = [];
+    
+    while (sobra > 0) {
+      
+      $.each(OpcoesTroco, function(index, value){
+        if (sobra % value >= value) {
+          return;
+        }
+
+        var numMoedas = Math.floor(sobra / value);
+
+        for (var i = 0; i < numMoedas; i++) {
+          ValorTroco.push(value);
+        }
+
+        sobra = sobra - (value * numMoedas);
+      });
+    }
+
+    var ValorTrocoFormatado = $.map(ValorTroco, function(value){
+      return '<span>' + value + ' centimo(s); </span>';
+    });
+
+    $("#troco").empty().append(ValorTrocoFormatado.join(''));
+	console.log(ValorTroco);
+  });
+});
+</script> 
+
+</body>
+
+</html>
